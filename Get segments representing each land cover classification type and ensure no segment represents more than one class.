@@ -1,0 +1,19 @@
+ground_truth = target_ds.GetRasterBand(1).ReadAsArray()
+
+classes = np.unique(ground_truth)[1:]
+print('class values', classes)
+
+segments_per_class = {}
+
+for klass in classes:
+    segments_of_class = segments[ground_truth == klass]
+    segments_per_class[klass] = set(segments_of_class)
+    print("Training segments for class", klass, ":", len(segments_of_class))
+
+intersection = set()
+accum = set()
+
+for class_segments in segments_per_class.values():
+    intersection |= accum.intersection(class_segments)
+    accum |= class_segments
+assert len(intersection) == 0, "Segment(s) represent multiple classes"
